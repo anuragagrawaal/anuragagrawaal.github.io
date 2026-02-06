@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Valentine?</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ff758c, #ff7eb3);
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .container {
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      position: relative;
+      width: 90%;
+      max-width: 420px;
+    }
+
+    h1 {
+      color: #ff4d6d;
+      margin-bottom: 30px;
+    }
+
+    .buttons {
+      position: relative;
+      height: 140px;
+    }
+
+    button {
+      padding: 12px 28px;
+      font-size: 18px;
+      border-radius: 30px;
+      border: none;
+      cursor: pointer;
+    }
+
+    #yes {
+      background-color: #ff4d6d;
+      color: white;
+    }
+
+    #no {
+      background-color: #ddd;
+      color: #333;
+      position: absolute;
+      left: 160px;
+      top: 20px;
+    }
+
+    #message {
+      margin-top: 20px;
+      font-size: 24px;
+      color: #ff4d6d;
+      display: none;
+    }
+
+    #sad {
+      font-size: 30px;
+      margin-top: 10px;
+      display: none;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="confetti"></canvas>
+
+  <div class="container">
+    <h1>Shrav, will you be my Valentine? 💖</h1>
+
+    <div class="buttons">
+      <button id="yes">YES</button>
+      <button id="no">NO</button>
+    </div>
+
+    <div id="message">Yayyy! 💘🥰</div>
+    <div id="sad">😢</div>
+  </div>
+
+  <script>
+    const noBtn = document.getElementById("no");
+    const sad = document.getElementById("sad");
+
+    function moveNo() {
+      const container = document.querySelector(".container");
+      const cRect = container.getBoundingClientRect();
+      const bRect = noBtn.getBoundingClientRect();
+
+      const maxX = cRect.width - bRect.width;
+      const maxY = cRect.height - bRect.height - 60;
+
+      noBtn.style.left = Math.random() * maxX + "px";
+      noBtn.style.top = Math.random() * maxY + "px";
+    }
+
+    // Dodge behavior
+    noBtn.addEventListener("mouseenter", moveNo);
+    noBtn.addEventListener("touchstart", moveNo);
+
+    // Sad emoji tease
+    noBtn.addEventListener("click", () => {
+      sad.style.display = "block";
+      setTimeout(() => sad.style.display = "none", 800);
+      moveNo();
+    });
+
+    // YES button
+    document.getElementById("yes").addEventListener("click", () => {
+      document.getElementById("message").style.display = "block";
+      startConfetti();
+    });
+
+    // 🎉 Confetti Logic
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let pieces = [];
+
+    function startConfetti() {
+      pieces = [];
+      for (let i = 0; i < 150; i++) {
+        pieces.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          size: Math.random() * 8 + 4,
+          speed: Math.random() * 4 + 2,
+          color: `hsl(${Math.random() * 360},100%,50%)`
+        });
+      }
+      requestAnimationFrame(updateConfetti);
+    }
+
+    function updateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      pieces.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+        p.y += p.speed;
+      });
+      requestAnimationFrame(updateConfetti);
+    }
+  </script>
+</body>
+</html>
